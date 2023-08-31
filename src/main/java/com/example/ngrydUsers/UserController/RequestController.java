@@ -13,7 +13,7 @@ import java.util.List;
 @RequestMapping("v1/")
 public class RequestController {
     private final String userName = "root";
-    private final String password = "@Blessing22#";
+    private final String password = "";
     private final String url = "jdbc:mysql://127.0.0.1:3306/users_db";
 
     @GetMapping("/users")
