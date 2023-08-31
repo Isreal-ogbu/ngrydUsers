@@ -49,7 +49,7 @@ public class RequestController {
             }
             return person;
         } catch (SQLException e) {
-            System.out.println("This error occurred: " + e.getMessage());
+            System.out.println("This error occurred : " + e.getMessage());
             return new Users(user);
         }
     }
@@ -60,7 +60,7 @@ public class RequestController {
 
         try(Connection connection = DriverManager.getConnection(url, userName, password);
             Statement statement = connection.createStatement()){
-            String query = String.format("SELECT * FROM nygrydusers");
+            String query = "SELECT * FROM nygrydusers";
             ResultSet resultSet= statement.executeQuery(query);
             while( resultSet.next() ){
                 list.add(new Users(resultSet.getString("name"), Integer.parseInt(resultSet.getString("age")),
