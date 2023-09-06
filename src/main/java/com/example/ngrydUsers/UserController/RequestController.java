@@ -2,6 +2,8 @@ package com.example.ngrydUsers.UserController;
 
 import com.example.ngrydUsers.Logs.LogWriter;
 import com.example.ngrydUsers.UserModel.Users;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
@@ -12,14 +14,30 @@ import java.util.List;
 @RestController
 @RequestMapping("v1/")
 public class RequestController {
-    private final String userName = "root";
-    private final String password = "";
-    private final String url = "jdbc:mysql://127.0.0.1:3306/users_db";
+
+    @Value("${spring.datasource.username}")
+    private String userName;
+
+    @Value("${spring.datasource.password}")
+    private String password;
+
+    @Value("${spring.datasource.url}")
+    private String url;
+
+    public String getUserName() {
+        return userName;
+    }
+    public String getPassword() {
+        return password;
+    }
+    public String getUrl() {
+        return url;
+    }
 
     @GetMapping("/users")
     public List<Users> getAllUsers(){
         List<Users> list = new ArrayList<>();
-        try(Connection connection = DriverManager.getConnection(url, userName, password);
+        try(Connection connection = DriverManager.getConnection(getUrl(), getUserName(), getPassword());
             Statement statement = connection.createStatement()){
             ResultSet resultSet= statement.executeQuery("SELECT * FROM nygrydusers");
             while( resultSet.next() ){
@@ -35,7 +53,7 @@ public class RequestController {
 
     @GetMapping("/user/{user}")
     public Users getUser(@PathVariable String user){
-        try (Connection connection = DriverManager.getConnection(url, userName, password);
+        try (Connection connection = DriverManager.getConnection(getUrl(), getUserName(), getPassword());
              Statement statement = connection.createStatement()) {
             String query = String.format("Select * from nygrydusers where name=\"%s\"", user.toLowerCase());
             ResultSet resultSet = statement.executeQuery(query);
@@ -58,7 +76,7 @@ public class RequestController {
     public List<Users> getSortedUsers(){
         List<Users> list = new ArrayList<>();
 
-        try(Connection connection = DriverManager.getConnection(url, userName, password);
+        try(Connection connection = DriverManager.getConnection(getUrl(), getUserName(), getPassword());
             Statement statement = connection.createStatement()){
             String query = "SELECT * FROM nygrydusers";
             ResultSet resultSet= statement.executeQuery(query);
@@ -76,7 +94,7 @@ public class RequestController {
 
     @PostMapping("/user")
     public String createUser(@RequestBody Users user) throws IOException {
-        try(Connection connection= DriverManager.getConnection(url, userName, password);
+        try(Connection connection= DriverManager.getConnection(getUrl(), getUserName(), getPassword());
             Statement statement= connection.createStatement()){
             String query = String.format("Insert into nygrydusers(name, age, accountBalance, location)Values(\"%s\",\"%s\",\"%s\",\"%s\")", user.getName(), user.getAge(), user.getAccountBalance(), user.getLocation());
             statement.execute(query);
